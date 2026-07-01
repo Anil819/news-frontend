@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Newspaper, CalendarDays, Bell, Clock, MapPin, ArrowRight } from 'lucide-react'
 import api from '../api/axios'
-
+import campusImage from "../assests/college-campus.jpeg";
 const quickLinks = [
   {
     icon: Newspaper,
@@ -53,7 +53,7 @@ export default function Home() {
       <section className="relative">
         <div className="h-[420px] sm:h-[480px] w-full overflow-hidden">
           <img
-            src="src\pages\assests\college-campus.jpeg"
+             src={campusImage}
             alt="College campus"
             className="w-full h-full object-cover"
           />

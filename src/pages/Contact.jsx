@@ -80,15 +80,16 @@ export default function Contact() {
                 Find us on the map and plan your visit to our college campus.
               </p>
             </div>
-            <iframe
-              title="Svims Indore"
-              className="w-full h-80 sm:h-96"
-              frameBorder="0"
-              loading="lazy"
-              allowFullScreen
-              referrerPolicy="no-referrer-when-downgrade"
-              src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBVizdQeh3udy11xDc5Ao2YStR2gLc-rfc&q=123%20College%20Road%2C%20City%2C%20State%20-%20400001"
-            />
+<iframe
+  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3719.0633599974985!2d75.82976507534819!3d22.701371979400268!2m3!1f0!3f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3962fdb5a5632205%3A0x621eb50b8e53e1b3!2sShri%20Vaishnav%20Institute%20of%20Management%20%26%20Science%2C%20Indore!5e1!3m2!1sen!2sin!4v1782925609626!5m2!1sen!2sin"
+  width="100%"
+  height="400"
+  style={{ border: 0 }}
+  allowFullScreen
+  loading="lazy"
+  referrerPolicy="strict-origin-when-cross-origin"
+  title="Shri Vaishnav Institute of Management & Science"
+></iframe>
           </div>
         </div>
 
