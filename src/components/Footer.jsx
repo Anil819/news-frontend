@@ -8,6 +8,24 @@ import {
 } from "lucide-react";
 
 export default function Footer() {
+  const socialLinks = [
+    {
+      Icon: Facebook,
+      href: "https://www.facebook.com/sviomi/",
+    },
+    {
+      Icon: Twitter,
+      href: "https://twitter.com/", // apni Twitter/X link
+    },
+    {
+      Icon: Instagram,
+      href: "https://www.instagram.com/svims_indore_/",
+    },
+    {
+      Icon: Linkedin,
+      href: "https://www.linkedin.com/school/shri-vaishnav-institute-of-management-science-indore/posts/?feedView=all",
+    },
+  ];
   return (
     <footer className="bg-gray-900 text-gray-300 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -23,16 +41,12 @@ export default function Footer() {
             announcements.
           </p>
           <div className="flex gap-3 mt-4">
-            {[Facebook, Twitter, Instagram, Linkedin].map((Icon, i) => (
+            {socialLinks.map(({ Icon, href }, i) => (
               <a
-                key={i.Facebook}
-                href="https://www.facebook.com/sviomi/"
-                className="bg-gray-800 hover:bg-blue-600 transition-colors p-2 rounded-lg"
-                key={i.Linkedin}
-                href="https://www.linkedin.com/school/shri-vaishnav-institute-of-management-science-indore/posts/?feedView=all"
-                className="bg-gray-800 hover:bg-blue-600 transition-colors p-2 rounded-lg"
-                key={i.Instagram}
-                href="https://www.instagram.com/svims_indore_/"
+                key={i}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-gray-800 hover:bg-blue-600 transition-colors p-2 rounded-lg"
               >
                 <Icon size={16} />
