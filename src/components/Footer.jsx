@@ -13,10 +13,10 @@ export default function Footer() {
       Icon: Facebook,
       href: "https://www.facebook.com/sviomi/",
     },
-    {
-      Icon: Twitter,
-      href: "https://twitter.com/", // apni Twitter/X link
-    },
+    // {
+    //   Icon: Twitter,
+    //   href: "https://twitter.com/", 
+    // },
     {
       Icon: Instagram,
       href: "https://www.instagram.com/svims_indore_/",
