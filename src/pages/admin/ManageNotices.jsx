@@ -71,15 +71,18 @@ export default function ManageNotices() {
     try {
       const noticeData = { ...form }
 
-      if (imageFile) {
-        const formData = new FormData()
-        formData.append('image', imageFile)
-        const { data } = await api.post('/upload', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        })
-        noticeData.image = data.url
-      }
+     if (imageFile) {
+  const formData = new FormData();
+  formData.append("image", imageFile);
 
+  const { data } = await api.post("/upload", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+   });
+
+  noticeData.image = data.url;
+}
       await api.post('/notices', noticeData)
       setForm(emptyForm)
       setImageFile(null)
