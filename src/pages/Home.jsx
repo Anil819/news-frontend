@@ -39,7 +39,6 @@ export default function Home() {
         setNews(newsRes.data.news)
         setEvents(eventsRes.data.events.slice(0, 3))
       } catch {
-        // Home page stays usable even if this fails — sections below just render empty.
       } finally {
         setLoading(false)
       }

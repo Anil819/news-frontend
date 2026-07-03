@@ -8,8 +8,7 @@ export default function DashboardLayout({ navItems, userName, userRole, pageTitl
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-gray-900 text-gray-300 flex-shrink-0 hidden md:flex flex-col">
+       <aside className="w-64 bg-gray-900 text-gray-300 flex-shrink-0 hidden md:flex flex-col">
         <div className="flex items-center gap-2 text-white font-bold px-5 py-5 border-b border-gray-800">
           <span className="bg-blue-600 rounded-lg p-1.5">
             <GraduationCap size={18} />
@@ -43,8 +42,7 @@ export default function DashboardLayout({ navItems, userName, userRole, pageTitl
         </nav>
       </aside>
 
-      {/* Main */}
-      <div className="flex-1 min-w-0">
+       <div className="flex-1 min-w-0">
         <header className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
           <h1 className="font-semibold text-gray-900">{pageTitle}</h1>
           <div className="flex items-center gap-4">

@@ -5,11 +5,9 @@ const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true) // true while checking existing session on load
+  const [loading, setLoading] = useState(true)  
 
-  // On first load, ask the backend "am I still logged in?" using the
-  // httpOnly cookie. This is what keeps you logged in after a refresh.
-  useEffect(() => {
+   useEffect(() => {
     const checkSession = async () => {
       try {
         const { data } = await api.get('/auth/me')

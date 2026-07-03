@@ -175,12 +175,11 @@ export default function ManageEvents() {
             className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
-            name="image"
-            value={form.image}
-            onChange={handleChange}
-            placeholder="Image URL (optional)"
-            className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+  type="file"
+  accept="image/*"
+  onChange={(e) => handleImageUpload(e.target.files[0])}
+  className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm"
+/>
           <select
             name="status"
             value={form.status}

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Newspaper,
@@ -12,106 +12,152 @@ import {
   LogOut,
   Plus,
   Trash2,
-  X
-} from 'lucide-react'
-import DashboardLayout from '../../components/DashboardLayout'
-import { useAuth } from '../../context/AuthContext'
-import api from '../../api/axios'
+  X,
+} from "lucide-react";
+import DashboardLayout from "../../components/DashboardLayout";
+import { useAuth } from "../../context/AuthContext";
+import api from "../../api/axios";
 
-const categories = ['Academics', 'Events', 'Placements', 'Campus', 'Announcements', 'Sports']
+const categories = [
+  "Academics",
+  "Events",
+  "Placements",
+  "Campus",
+  "Announcements",
+  "Sports",
+];
 
 const emptyForm = {
-  title: '',
-  excerpt: '',
-  content: '',
-  category: 'Campus',
-  image: '',
-  status: 'Published'
-}
+  title: "",
+  excerpt: "",
+  content: "",
+  category: "Campus",
+  image: "",
+  status: "Published",
+};
 
 export default function ManageNews() {
-  const navigate = useNavigate()
-  const { user, logout } = useAuth()
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
-  const [news, setNews] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState(emptyForm)
-  const [submitting, setSubmitting] = useState(false)
-  const [deletingId, setDeletingId] = useState(null)
+  const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState(emptyForm);
+  const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
 
   const fetchNews = async () => {
-    setLoading(true)
-    setError('')
+    setLoading(true);
+    setError("");
     try {
-      const { data } = await api.get('/news', {
-        params: { limit: 50, includeUnpublished: true }
-      })
-      setNews(data.news)
+      const { data } = await api.get("/news", {
+        params: { limit: 50, includeUnpublished: true },
+      });
+      setNews(data.news);
     } catch (err) {
-      setError(err.response?.data?.message || 'Could not load news.')
+      setError(err.response?.data?.message || "Could not load news.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchNews()
-  }, [])
+    fetchNews();
+  }, []);
 
   const handleLogout = async () => {
-    await logout()
-    navigate('/login')
-  }
+    await logout();
+    navigate("/login");
+  };
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
+  
   const handleCreate = async (e) => {
-    e.preventDefault()
-    setSubmitting(true)
-    setError('')
+    e.preventDefault();
+    setSubmitting(true);
+    setError("");
     try {
-      await api.post('/news', form)
-      setForm(emptyForm)
-      setShowForm(false)
-      fetchNews()
+      await api.post("/news", form);
+      setForm(emptyForm);
+      setShowForm(false);
+      fetchNews();
     } catch (err) {
-      setError(err.response?.data?.message || 'Could not create news article.')
+      setError(err.response?.data?.message || "Could not create news article.");
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
-  }
+  };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this news article? This cannot be undone.')) return
-    setDeletingId(id)
+    if (!window.confirm("Delete this news article? This cannot be undone."))
+      return;
+    setDeletingId(id);
     try {
-      await api.delete(`/news/${id}`)
-      setNews((prev) => prev.filter((n) => n._id !== id))
+      await api.delete(`/news/${id}`);
+      setNews((prev) => prev.filter((n) => n._id !== id));
     } catch (err) {
-      setError(err.response?.data?.message || 'Could not delete this article.')
+      setError(err.response?.data?.message || "Could not delete this article.");
     } finally {
-      setDeletingId(null)
+      setDeletingId(null);
     }
-  }
+  };
+  const handleImageUpload = async (file) => {
+    const formData = new FormData();
+
+    formData.append("image", file);
+
+    const { data } = await api.post("/ai/generate-description", formData);
+
+    setForm({
+      ...form,
+      excerpt: data.description,
+    });
+  };
 
   const navItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', onClick: () => navigate('/admin/dashboard') },
-    { icon: Newspaper, label: 'News Management', active: true },
-    { icon: CalendarDays, label: 'Events Management', onClick: () => navigate('/admin/events') },
-    { icon: Image, label: 'Gallery Management', onClick: () => navigate('/admin/gallery') },
-    { icon: Megaphone, label: 'Notices', onClick: () => navigate('/admin/notices') },
-    { icon: Users, label: 'User Management', onClick: () => navigate('/admin/users') },
-    { icon: MessageSquare, label: 'Messages', onClick: () => navigate('/admin/messages') },
-    { icon: Settings, label: 'Settings' },
-    { icon: LogOut, label: 'Logout', onClick: handleLogout }
-  ]
+    {
+      icon: LayoutDashboard,
+      label: "Dashboard",
+      onClick: () => navigate("/admin/dashboard"),
+    },
+    { icon: Newspaper, label: "News Management", active: true },
+    {
+      icon: CalendarDays,
+      label: "Events Management",
+      onClick: () => navigate("/admin/events"),
+    },
+    {
+      icon: Image,
+      label: "Gallery Management",
+      onClick: () => navigate("/admin/gallery"),
+    },
+    {
+      icon: Megaphone,
+      label: "Notices",
+      onClick: () => navigate("/admin/notices"),
+    },
+    {
+      icon: Users,
+      label: "User Management",
+      onClick: () => navigate("/admin/users"),
+    },
+    {
+      icon: MessageSquare,
+      label: "Messages",
+      onClick: () => navigate("/admin/messages"),
+    },
+    { icon: Settings, label: "Settings" },
+    { icon: LogOut, label: "Logout", onClick: handleLogout },
+  ];
 
   return (
     <DashboardLayout
       navItems={navItems}
-      userName={user?.name || 'Admin User'}
+      userName={user?.name || "Admin User"}
       userRole="Administrator"
       pageTitle="News Management"
     >
@@ -122,12 +168,14 @@ export default function ManageNews() {
           className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
         >
           {showForm ? <X size={16} /> : <Plus size={16} />}
-          {showForm ? 'Cancel' : 'Add News'}
+          {showForm ? "Cancel" : "Add News"}
         </button>
       </div>
 
       {error && (
-        <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg">{error}</div>
+        <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg">
+          {error}
+        </div>
       )}
 
       {showForm && (
@@ -162,11 +210,10 @@ export default function ManageNews() {
             className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
           />
           <input
-            name="image"
-            value={form.image}
-            onChange={handleChange}
-            placeholder="Image URL (optional)"
-            className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            type="file"
+            accept="image/*"
+            onChange={(e) => handleImageUpload(e.target.files[0])}
+            className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm"
           />
           <div className="grid sm:grid-cols-2 gap-4">
             <select
@@ -196,7 +243,7 @@ export default function ManageNews() {
             disabled={submitting}
             className="bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors"
           >
-            {submitting ? 'Saving...' : 'Publish Article'}
+            {submitting ? "Saving..." : "Publish Article"}
           </button>
         </form>
       )}
@@ -217,33 +264,44 @@ export default function ManageNews() {
             <tbody>
               {loading && (
                 <tr>
-                  <td colSpan={6} className="px-5 py-6 text-center text-gray-400">
+                  <td
+                    colSpan={6}
+                    className="px-5 py-6 text-center text-gray-400"
+                  >
                     Loading...
                   </td>
                 </tr>
               )}
               {!loading && news.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-5 py-6 text-center text-gray-400">
+                  <td
+                    colSpan={6}
+                    className="px-5 py-6 text-center text-gray-400"
+                  >
                     No news articles yet.
                   </td>
                 </tr>
               )}
               {!loading &&
                 news.map((n) => (
-                  <tr key={n._id} className="border-b border-gray-50 last:border-0">
+                  <tr
+                    key={n._id}
+                    className="border-b border-gray-50 last:border-0"
+                  >
                     <td className="px-5 py-3 text-gray-900">{n.title}</td>
                     <td className="px-5 py-3 text-gray-500">{n.category}</td>
-                    <td className="px-5 py-3 text-gray-500">{n.author?.name || '—'}</td>
+                    <td className="px-5 py-3 text-gray-500">
+                      {n.author?.name || "—"}
+                    </td>
                     <td className="px-5 py-3 text-gray-500">
                       {new Date(n.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-5 py-3">
                       <span
                         className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                          n.status === 'Published'
-                            ? 'bg-green-50 text-green-600'
-                            : 'bg-amber-50 text-amber-600'
+                          n.status === "Published"
+                            ? "bg-green-50 text-green-600"
+                            : "bg-amber-50 text-amber-600"
                         }`}
                       >
                         {n.status}
@@ -256,7 +314,7 @@ export default function ManageNews() {
                         className="text-red-500 hover:text-red-700 disabled:opacity-50 inline-flex items-center gap-1"
                       >
                         <Trash2 size={14} />
-                        {deletingId === n._id ? 'Deleting...' : 'Delete'}
+                        {deletingId === n._id ? "Deleting..." : "Delete"}
                       </button>
                     </td>
                   </tr>
@@ -266,5 +324,5 @@ export default function ManageNews() {
         </div>
       </div>
     </DashboardLayout>
-  )
+  );
 }

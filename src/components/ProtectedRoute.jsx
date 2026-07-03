@@ -17,9 +17,7 @@ export default function ProtectedRoute({ role, children }) {
   }
 
   if (role && user.role !== role) {
-    // Logged in, but as the wrong role for this dashboard — send them
-    // to their own dashboard instead of the one they tried to access.
-    return <Navigate to={`/${user.role}/dashboard`} replace />
+      return <Navigate to={`/${user.role}/dashboard`} replace />
   }
 
   return children

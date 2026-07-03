@@ -127,13 +127,11 @@ export default function ManageGallery() {
           className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 space-y-4"
         >
           <input
-            name="image"
-            value={form.image}
-            onChange={handleChange}
-            required
-            placeholder="Image URL"
-            className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+  type="file"
+  accept="image/*"
+  onChange={(e) => handleImageUpload(e.target.files[0])}
+  className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm"
+/>
           <input
             name="caption"
             value={form.caption}
