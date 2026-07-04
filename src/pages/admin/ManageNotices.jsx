@@ -164,7 +164,40 @@ export default function ManageNotices() {
       setDeletingId(null);
     }
   };
+const handleImageChange = async (e) => {
+  const file = e.target.files[0];
 
+  if (!file) return;
+
+  setImageFile(file);
+  setImagePreview(URL.createObjectURL(file));
+
+  try {
+    setAiLoading(true);
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const { data } = await api.post(
+      "/ai/generate-description",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    setForm((prev) => ({
+      ...prev,
+      description: data.description,
+    }));
+  } catch (err) {
+    console.log(err.response?.data || err.message);
+  } finally {
+    setAiLoading(false);
+  }
+};
   const navItems = [
     {
       icon: LayoutDashboard,

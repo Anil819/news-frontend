@@ -39,6 +39,9 @@ export default function ManageEvents() {
   const [form, setForm] = useState(emptyForm)
   const [submitting, setSubmitting] = useState(false)
   const [deletingId, setDeletingId] = useState(null)
+const [imageFile, setImageFile] = useState(null);
+const [imagePreview, setImagePreview] = useState("");
+const [aiLoading, setAiLoading] = useState(false);
 
   const fetchEvents = async () => {
     setLoading(true)
@@ -63,23 +66,96 @@ export default function ManageEvents() {
   }
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
+const generateDescription = async (file) => {
+  try {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const { data } = await api.post(
+      "/ai/generate-description",
+      formData
+    );
+
+    setForm((prev) => ({
+      ...prev,
+      message: data.description,
+    }));
+  } catch (err) {
+    console.log(err.response?.data || err.message);
+  }
+};
 
   const handleCreate = async (e) => {
-    e.preventDefault()
-    setSubmitting(true)
-    setError('')
-    try {
-      await api.post('/events', form)
-      setForm(emptyForm)
-      setShowForm(false)
-      fetchEvents()
-    } catch (err) {
-      setError(err.response?.data?.message || 'Could not create event.')
-    } finally {
-      setSubmitting(false)
-    }
-  }
+    e.preventDefault();
+    setSubmitting(true);
+    setError("");
 
+    try {
+      const noticeData = { ...form };
+
+      // Upload image to Cloudinary
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("image", imageFile);
+
+        const { data } = await api.post("/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        eventsData.image = data.url;
+      }
+
+      // Save event in database
+      await api.post("/events", eventsData);
+
+      setForm(emptyForm);
+      setImageFile(null);
+      setImagePreview("");
+      setShowForm(false);
+
+      fetchNotices();
+    } catch (err) {
+      setError(err.response?.data?.message || "Could not create notice.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+  const handleFileChange = async (e) => {
+  const file = e.target.files[0];
+
+  if (!file) return;
+
+  setImageFile(file);
+  setImagePreview(URL.createObjectURL(file));
+
+  try {
+    setAiLoading(true);
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const { data } = await api.post(
+      "/ai/generate-description",
+      formData
+    );
+
+    setForm((prev) => ({
+      ...prev,
+      description: data.description,
+    }));
+  } catch (err) {
+    console.log(err);
+
+    alert(
+      err.response?.data?.message ||
+      "Failed to generate AI description."
+    );
+  } finally {
+    setAiLoading(false);
+  }
+};
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this event? This cannot be undone.')) return
     setDeletingId(id)
@@ -177,9 +253,16 @@ export default function ManageEvents() {
           <input
   type="file"
   accept="image/*"
-  onChange={(e) => handleImageUpload(e.target.files[0])}
+  onChange={handleFileChange}
   className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm"
 />
+{imagePreview && (
+  <img
+    src={imagePreview}
+    alt="Preview"
+    className="w-full h-52 object-cover rounded-lg mt-3"
+  />
+)}
           <select
             name="status"
             value={form.status}

@@ -47,6 +47,9 @@ export default function ManageNews() {
   const [form, setForm] = useState(emptyForm);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
 
   const fetchNews = async () => {
     setLoading(true);
@@ -75,23 +78,87 @@ export default function ManageNews() {
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  
+  const generateDescription = async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const { data } = await api.post("/ai/generate-description", formData);
+
+      setForm((prev) => ({
+        ...prev,
+        message: data.description,
+      }));
+    } catch (err) {
+      console.log(err.response?.data || err.message);
+    }
+  };
   const handleCreate = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     setError("");
+
     try {
-      await api.post("/news", form);
+      const noticeData = { ...form };
+
+      // Upload image to Cloudinary
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("image", imageFile);
+
+        const { data } = await api.post("/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        newsData.image = data.url;
+      }
+
+      // Save news in database
+      await api.post("/news", newsData);
+
       setForm(emptyForm);
+      setImageFile(null);
+      setImagePreview("");
       setShowForm(false);
-      fetchNews();
+
+      fetchNotices();
     } catch (err) {
-      setError(err.response?.data?.message || "Could not create news article.");
+      setError(err.response?.data?.message || "Could not create notice.");
     } finally {
       setSubmitting(false);
     }
   };
+ const handleFileChange = async (e) => {
+  const file = e.target.files[0];
 
+  if (!file) return;
+
+  setImageFile(file);
+  setImagePreview(URL.createObjectURL(file));
+
+  setAiLoading(true);
+
+  try {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const { data } = await api.post(
+      "/ai/generate-description",
+      formData
+    );
+
+    setForm((prev) => ({
+      ...prev,
+      excerpt: data.description,
+    }));
+  } catch (err) {
+    console.log(err.response?.data || err.message);
+  } finally {
+    setAiLoading(false);
+  }
+};
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this news article? This cannot be undone."))
       return;
@@ -212,9 +279,16 @@ export default function ManageNews() {
           <input
             type="file"
             accept="image/*"
-            onChange={(e) => handleImageUpload(e.target.files[0])}
+            onChange={handleFileChange}
             className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm"
           />
+          {imagePreview && (
+            <img
+              src={imagePreview}
+              alt="Preview"
+              className="w-full h-52 object-cover rounded-lg mt-3"
+            />
+          )}
           <div className="grid sm:grid-cols-2 gap-4">
             <select
               name="category"
